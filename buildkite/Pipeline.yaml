@@ -13,7 +13,7 @@ steps:
           init: false
           debug: true
           mount-buildkite-agent: false
-          volumes: ["./logs:/logs"]
+          volumes: ["./logs:/logs", "/var/lib/buildkite/builds/cache:/cache"]
       - artifacts#v1.2.0:
           upload: [ "logs/**/*.log", "logs/**/*.log.*", "logs/results.tap" ]
       - matrix-org/annotate:
