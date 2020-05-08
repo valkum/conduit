@@ -17,7 +17,9 @@ pub use error::{Error, Result};
 pub use pdu::PduEvent;
 pub use ruma_wrapper::{MatrixResult, Ruma};
 
-use rocket::{fairing::AdHoc, routes};
+use directories::ProjectDirs;
+use rocket::{config::ConfigError, fairing::AdHoc, routes};
+use serde::Deserialize;
 
 fn setup_rocket() -> rocket::Rocket {
     rocket::ignite()
@@ -75,8 +77,7 @@ fn setup_rocket() -> rocket::Rocket {
             ],
         )
         .attach(AdHoc::on_attach("Config", |rocket| {
-            let hostname = rocket.config().get_str("hostname").unwrap_or("localhost");
-            let data = Database::load_or_create(&hostname);
+            let data = Database::load_or_create(&rocket.config());
 
             Ok(rocket.manage(data))
         }))
