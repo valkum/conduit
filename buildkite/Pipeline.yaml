@@ -1,0 +1,27 @@
+steps:
+  - label: "SyTest - :rust: nightly / :sled:"
+    command:
+      - "bash /bootstrap.sh conduit"
+    plugins:
+      - docker#v3.0.1:
+          image: "valkum/sytest-conduit:latest"
+          propagate-environment: true
+          always-pull: true
+          workdir: "/src"
+          entrypoint: '/bin/sh'
+          shell: ["-x", "-c"]
+          init: false
+          debug: true
+          mount-buildkite-agent: false
+          volumes: ["./logs:/logs"]
+      - artifacts#v1.2.0:
+          upload: [ "logs/**/*.log", "logs/**/*.log.*", "logs/results.tap" ]
+      - matrix-org/annotate:
+          path: "logs/annotate.md"
+          style: "error"
+    retry:
+      automatic:
+        - exit_status: -1
+          limit: 2
+        - exit_status: 2
+          limit: 2
