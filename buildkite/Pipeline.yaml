@@ -11,7 +11,9 @@ steps:
           propagate-environment: true
           always-pull: true
           workdir: "/src"
+          debug: true
           mount-buildkite-agent: false
+          volumes: ["/var/lib/buildkite/cache:/cache"]
   - label: "clippy :rust: nightly"
     command:
       - cargo clippy --all -- -D warnings
@@ -23,7 +25,9 @@ steps:
           image: "rustlang/rust:nightly"
           propagate-environment: true
           workdir: "/src"
+          debug: true
           mount-buildkite-agent: false
+          volumes: ["/var/lib/buildkite/cache:/cache"]
   - label: "test :rust: nightly"
     commands:
       - cargo test --all-features
@@ -35,7 +39,9 @@ steps:
           image: "rustlang/rust:nightly"
           propagate-environment: true
           workdir: "/src"
+          debug: true
           mount-buildkite-agent: false
+          volumes: ["/var/lib/buildkite/cache:/cache"]
   - label: "SyTest - :rust: nightly / :sled:"
     command:
       - "bash /bootstrap.sh conduit"
@@ -50,7 +56,7 @@ steps:
           init: false
           debug: true
           mount-buildkite-agent: false
-          volumes: ["./logs:/logs", "/var/lib/buildkite/builds/cache:/cache"]
+          volumes: ["./logs:/logs", "/var/lib/buildkite/cache:/cache"]
       - artifacts#v1.2.0:
           upload: [ "logs/**/*.log", "logs/**/*.log.*", "logs/results.tap" ]
       - matrix-org/annotate:
