@@ -186,6 +186,7 @@ def main(results_tap_path, verbose):
     test_name_to_group_id = {}
     fed_tests = set()
     client_tests = set()
+    groupless_tests = set()
     with open("./are-we-synapse-yet.list", "r") as f:
         for line in f.readlines():
             test_name = " ".join(line.split(" ")[1:]).strip()
@@ -223,7 +224,8 @@ def main(results_tap_path, verbose):
             name = test_result["name"]
             group_id = test_name_to_group_id.get(name)
             if not group_id:
-                raise Exception("The test '%s' doesn't have a group" % (name,))
+                groupless_tests.add(name)
+                # raise Exception("The test '%s' doesn't have a group" % (name,))
             if group_id == "nsp":
                 summary["nonspec"]["nsp"][name] = test_result["ok"]
             elif group_id in test_mappings["federation_apis"]:
@@ -241,6 +243,12 @@ def main(results_tap_path, verbose):
     print_stats("Non-Spec APIs", summary["nonspec"], test_mappings, verbose)
     print_stats("Client-Server APIs", summary["client"], test_mappings["client_apis"], verbose)
     print_stats("Federation APIs", summary["federation"], test_mappings["federation_apis"], verbose)
+    if verbose:
+        print("The following tests don't have a group:")
+        for name in groupless_tests:
+            print("  %s" % (name,))
+    else:
+        print("%d tests don't have a group" % len(groupless_tests))
 
 
 
