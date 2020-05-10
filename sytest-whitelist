@@ -54,3 +54,32 @@ Request to logout with invalid an access token is rejected
 Request to logout without an access token is rejected
 Room creation reports m.room.create to myself
 Room creation reports m.room.member to myself
+Version responds 200 OK with valid structure
+PUT /profile/:user_id/displayname sets my name
+GET /profile/:user_id/displayname publicly accessible
+GET /device/{deviceId} gives a 404 for unknown devices
+PUT /device/{deviceId} gives a 404 for unknown devices
+After deactivating account, can't log in with an email
+Can create filter
+Should reject keys claiming to belong to a different user
+Can add account data
+Checking local federation server
+Alternative server names do not cause a routing loop
+Can read configuration endpoint
+AS cannot create users outside its own namespace
+Changing the actions of an unknown default rule fails with 404
+Changing the actions of an unknown rule fails with 404
+Trying to add push rule with invalid scope fails with 400
+Trying to add push rule with invalid template fails with 400
+Trying to add push rule with rule_id with slashes fails with 400
+Trying to add push rule with override rule without conditions fails with 400
+Trying to add push rule with underride rule without conditions fails with 400
+Trying to add push rule with condition without kind fails with 400
+Trying to add push rule with content rule without pattern fails with 400
+Trying to add push rule with no actions fails with 400
+Trying to add push rule with invalid action fails with 400
+Trying to get push rules with unknown rule_id fails with 404
+GET /events with non-numeric 'limit'
+GET /events with negative 'limit'
+GET /events with non-numeric 'timeout'
+Getting push rules doesn't corrupt the cache SYN-390
