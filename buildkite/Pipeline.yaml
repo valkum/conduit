@@ -11,6 +11,7 @@ steps:
           propagate-environment: true
           always-pull: true
           workdir: "/src"
+          mount-buildkite-agent: false
   - label: "clippy :rust: nightly"
     command:
       - cargo clippy --all -- -D warnings
@@ -21,9 +22,8 @@ steps:
           privileged: true
           image: "rustlang/rust:nightly"
           propagate-environment: true
-          always-pull: true
           workdir: "/src"
-
+          mount-buildkite-agent: false
   - label: "test :rust: nightly"
     commands:
       - cargo test --all-features
@@ -34,8 +34,8 @@ steps:
           privileged: true
           image: "rustlang/rust:nightly"
           propagate-environment: true
-          always-pull: true
           workdir: "/src"
+          mount-buildkite-agent: false
   - label: "SyTest - :rust: nightly / :sled:"
     command:
       - "bash /bootstrap.sh conduit"
