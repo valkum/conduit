@@ -1,4 +1,41 @@
 steps:
+  - label: "check :rust: nightly"
+    commands:
+      - RUSTFLAGS="-D warnings" cargo check --all-targets
+    retry:
+      automatic: false
+    plugins:
+      - docker#v3.0.1:
+          privileged: true
+          image: "rustlang/rust:nightly"
+          propagate-environment: true
+          always-pull: true
+          workdir: "/src"
+  - label: "clippy :rust: nightly"
+    command:
+      - cargo clippy --all -- -D warnings
+    retry:
+      automatic: false
+    plugins:
+      - docker#v3.0.1:
+          privileged: true
+          image: "rustlang/rust:nightly"
+          propagate-environment: true
+          always-pull: true
+          workdir: "/src"
+
+  - label: "test :rust: nightly"
+    commands:
+      - cargo test --all-features
+    retry:
+      automatic: false
+    plugins:
+      - docker#v3.0.1:
+          privileged: true
+          image: "rustlang/rust:nightly"
+          propagate-environment: true
+          always-pull: true
+          workdir: "/src"
   - label: "SyTest - :rust: nightly / :sled:"
     command:
       - "bash /bootstrap.sh conduit"
