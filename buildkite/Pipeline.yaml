@@ -7,7 +7,7 @@ steps:
     plugins:
       - docker#v3.0.1:
           privileged: true
-          image: "rustlang/rust:nightly"
+          image: "valkum/docker-rust-nightly-sscache:nightly"
           propagate-environment: true
           always-pull: true
           workdir: "/src"
@@ -25,7 +25,7 @@ steps:
     plugins:
       - docker#v3.0.1:
           privileged: true
-          image: "rustlang/rust:nightly"
+          image: "valkum/docker-rust-nightly-sscache:nightly"
           propagate-environment: true
           workdir: "/src"
           debug: true
@@ -39,7 +39,7 @@ steps:
     plugins:
       - docker#v3.0.1:
           privileged: true
-          image: "rustlang/rust:nightly"
+          image: "valkum/docker-rust-nightly-sscache:nightly"
           propagate-environment: true
           workdir: "/src"
           debug: true
