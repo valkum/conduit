@@ -1,7 +1,9 @@
 steps:
-  - label: "check :rust: nightly"
+  - label: "check, clippy & test - :rust: nightly"
     commands:
       - RUSTFLAGS="-D warnings" cargo check --all-targets
+      - cargo clippy --all -- -D warnings
+      - cargo test --all-features
     retry:
       automatic: false
     plugins:
@@ -14,34 +16,6 @@ steps:
           entrypoint: '/bin/sh'
           shell: ["-x", "-c"]
           init: false
-          debug: true
-          mount-buildkite-agent: false
-          volumes: ["/var/lib/buildkite/cache:/cache"]
-  - label: "clippy :rust: nightly"
-    command:
-      - cargo clippy --all -- -D warnings
-    retry:
-      automatic: false
-    plugins:
-      - docker#v3.0.1:
-          privileged: true
-          image: "valkum/docker-rust-nightly-sscache:nightly"
-          propagate-environment: true
-          workdir: "/src"
-          debug: true
-          mount-buildkite-agent: false
-          volumes: ["/var/lib/buildkite/cache:/cache"]
-  - label: "test :rust: nightly"
-    commands:
-      - cargo test --all-features
-    retry:
-      automatic: false
-    plugins:
-      - docker#v3.0.1:
-          privileged: true
-          image: "valkum/docker-rust-nightly-sscache:nightly"
-          propagate-environment: true
-          workdir: "/src"
           debug: true
           mount-buildkite-agent: false
           volumes: ["/var/lib/buildkite/cache:/cache"]
