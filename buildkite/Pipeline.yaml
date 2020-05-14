@@ -1,7 +1,6 @@
 steps:
   - label: "check, clippy & test - :rust: nightly"
     commands:
-      - RUSTFLAGS="-D warnings" cargo check --all-targets
       - cargo clippy --all -- -D warnings
       - cargo test --all-features
     retry:
