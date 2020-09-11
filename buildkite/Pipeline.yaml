@@ -18,6 +18,13 @@ steps:
           debug: true
           mount-buildkite-agent: false
           volumes: ["/var/lib/buildkite/cache:/cache"]
+          environment: 
+            - "AWS_ACCESS_KEY_ID"
+            - "AWS_SECRET_ACCESS_KEY"
+            - "SCCACHE_BUCKET"
+            - "SCCACHE_ENDPOINT"
+            - "SCCACHE_S3_USE_SSL"
+            - "RUSTC_WRAPPER=true"
   - label: "SyTest - :rust: nightly / :sled:"
     command:
       - "bash /bootstrap.sh conduit"
@@ -33,6 +40,13 @@ steps:
           debug: true
           mount-buildkite-agent: false
           volumes: ["./logs:/logs", "/var/lib/buildkite/cache:/cache"]
+          environment: 
+            - "AWS_ACCESS_KEY_ID"
+            - "AWS_SECRET_ACCESS_KEY"
+            - "SCCACHE_BUCKET"
+            - "SCCACHE_ENDPOINT"
+            - "SCCACHE_S3_USE_SSL"
+            - "RUSTC_WRAPPER=true"
       - artifacts#v1.2.0:
           upload: [ "logs/**/*.log", "logs/**/*.log.*", "logs/results.tap" ]
       - matrix-org/annotate:
