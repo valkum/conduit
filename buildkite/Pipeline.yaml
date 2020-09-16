@@ -83,7 +83,7 @@ steps:
         - exit_status: 2
           limit: 2
 
-  - label: \U0001F9EA Complement
+  - label: 🧪 Complement
     soft_fail: true
     if: build.branch == "complement"
     commands:
