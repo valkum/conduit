@@ -1,6 +1,5 @@
 steps:
   - label: "check, clippy & test - :rust: nightly"
-    if: build.branch == "valkum/complement"
     commands:
       - cargo clippy --all -- -D warnings
       - cargo test --all-features
@@ -84,11 +83,11 @@ steps:
         - exit_status: 2
           limit: 2
 
-  - labels: \U0001F9EA Complement
+  - label: \U0001F9EA Complement
     soft_fail: true
     if: build.branch == "valkum/complement"
     commands:
-      - docker build --build-arg AWS_ACCESS_KEY_ID --build-arg AWS_SECRET_ACCESS_KEY --build-arg SCCACHE_BUCKET --build-arg SCCACHE_ENDPOINT --build-arg SCCACHE_S3_USE_SSL --build-arg RUSTC_WRAPPER -t complement-conduit -f scripts/Complement.Dockerfile .
+      - docker build --build-arg AWS_ACCESS_KEY_ID --build-arg AWS_SECRET_ACCESS_KEY --build-arg SCCACHE_BUCKET --build-arg SCCACHE_ENDPOINT --build-arg SCCACHE_S3_USE_SSL --build-arg RUSTC_WRAPPER -t complement-conduit -f tests/Complement.Dockerfile .
       - "wget -N https://github.com/matrix-org/complement/archive/master.tar.gz && tar -xzf master.tar.gz"
       - "cd complement-master && COMPLEMENT_BASE_IMAGE=complement-conduit:latest go test -v ./tests"
     plugins:
