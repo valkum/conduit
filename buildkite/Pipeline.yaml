@@ -1,12 +1,13 @@
 steps:
   - label: "check, clippy & test - :rust: nightly"
+    if: build.branch == "valkum/complement"
     commands:
       - cargo clippy --all -- -D warnings
       - cargo test --all-features
     retry:
       automatic: false
     plugins:
-      - docker#v3.0.1:
+      - docker#v3.6.0:
           privileged: true
           image: "valkum/docker-rust-nightly-sscache:nightly"
           propagate-environment: true
@@ -15,7 +16,32 @@ steps:
           entrypoint: '/bin/sh'
           shell: ["-x", "-c"]
           init: false
-          debug: true
+          mount-buildkite-agent: false
+          volumes: ["/var/lib/buildkite/cache:/cache"]
+          environment: 
+            - "AWS_ACCESS_KEY_ID"
+            - "AWS_SECRET_ACCESS_KEY"
+            - "SCCACHE_BUCKET"
+            - "SCCACHE_ENDPOINT"
+            - "SCCACHE_S3_USE_SSL"
+            - "RUSTC_WRAPPER=true"
+  - label: "check, clippy & test - :rust: 1.46.0"
+    if: build.branch == "valkum/complement"
+    commands:
+      - cargo clippy --all -- -D warnings
+      - cargo test --all-features
+    retry:
+      automatic: false
+    plugins:
+      - docker#v3.6.0:
+          privileged: true
+          image: "valkum/docker-rust-ci:1.46.0"
+          propagate-environment: true
+          always-pull: true
+          workdir: "/src"
+          entrypoint: '/bin/sh'
+          shell: ["-x", "-c"]
+          init: false
           mount-buildkite-agent: false
           volumes: ["/var/lib/buildkite/cache:/cache"]
           environment: 
@@ -29,7 +55,7 @@ steps:
     command:
       - "bash /bootstrap.sh conduit"
     plugins:
-      - docker#v3.0.1:
+      - docker#v3.6.0:
           image: "valkum/sytest-conduit:latest"
           propagate-environment: true
           always-pull: true
@@ -37,7 +63,6 @@ steps:
           entrypoint: '/bin/sh'
           shell: ["-x", "-c"]
           init: false
-          debug: true
           mount-buildkite-agent: false
           volumes: ["./logs:/logs", "/var/lib/buildkite/cache:/cache"]
           environment: 
@@ -58,3 +83,28 @@ steps:
           limit: 2
         - exit_status: 2
           limit: 2
+
+  - labels: \U0001F9EA Complement
+    soft_fail: true
+    if: build.branch == "valkum/complement"
+    commands:
+      - docker build --build-arg AWS_ACCESS_KEY_ID --build-arg AWS_SECRET_ACCESS_KEY --build-arg SCCACHE_BUCKET --build-arg SCCACHE_ENDPOINT --build-arg SCCACHE_S3_USE_SSL --build-arg RUSTC_WRAPPER -t complement-conduit -f scripts/Complement.Dockerfile .
+      - "wget -N https://github.com/matrix-org/complement/archive/master.tar.gz && tar -xzf master.tar.gz"
+      - "cd complement-master && COMPLEMENT_BASE_IMAGE=complement-conduit:latest go test -v ./tests"
+    plugins:
+      - docker#v3.6.0:
+          image: "matrixdotorg/complement:latest"
+          mount-buildkite-agent: false
+          publish: [ "8448:8448" ]
+          # Complement uses Docker so pass through the docker socket. This means Complement shares
+          # the hosts Docker.
+          volumes:
+          - "/var/run/docker.sock:/var/run/docker.sock"
+          environment: 
+            - "CI=true"
+            - "AWS_ACCESS_KEY_ID"
+            - "AWS_SECRET_ACCESS_KEY"
+            - "SCCACHE_BUCKET"
+            - "SCCACHE_ENDPOINT"
+            - "SCCACHE_S3_USE_SSL"
+            - "RUSTC_WRAPPER=true"
